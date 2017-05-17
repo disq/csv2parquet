@@ -115,7 +115,7 @@ class Column:
         # that's not the same as impossible. If you are reading this
         # and have an idea for a better solution, please contact the
         # author (see README.md).
-        return "CASE when columns[{index}]='{csv_name}' then CAST(NULL AS {type}) else CAST(columns[{index}] as {type}) end as `{parquet_name}`".format(
+        return "CASE when columns[{index}] IN ('{csv_name}','') then CAST(NULL AS {type}) else CAST(columns[{index}] as {type}) end as `{parquet_name}`".format(
             index=index, type=self.type, parquet_name=self.parquet, csv_name=self.csv)
 
 class Columns:
