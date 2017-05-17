@@ -87,17 +87,16 @@ class TestDrillScript(unittest.TestCase):
 alter session set `store.format`='parquet';
 CREATE TABLE dfs.tmp.`/path/to/parquet_output/` AS
 SELECT
-CASE when columns[0]='When' then CAST(NULL AS DATE) else CAST(columns[0] as DATE) end as `Date`,
+CASE when columns[0] IN ('When','') then CAST(NULL AS DATE) else CAST(columns[0] as DATE) end as `Date`,
 columns[1] as `Open`,
 columns[2] as `High`,
 columns[3] as `Low`,
 columns[4] as `Close`,
 columns[5] as `Volume`,
 columns[6] as `Ex-Dividend`,
-CASE when columns[7]='Split Ratio' then CAST(NULL AS FLOAT) else CAST(columns[7] as FLOAT) end as `Split Ratio`,
-CASE when columns[8]='Adj. Open' then CAST(NULL AS DOUBLE) else CAST(columns[8] as DOUBLE) end as `Adj Open`
-FROM TABLE(dfs.`/path/to/input.csv`(type=>'text', fieldDelimiter=>','))
-OFFSET 1
+CASE when columns[7] IN ('Split Ratio','') then CAST(NULL AS FLOAT) else CAST(columns[7] as FLOAT) end as `Split Ratio`,
+CASE when columns[8] IN ('Adj. Open','') then CAST(NULL AS DOUBLE) else CAST(columns[8] as DOUBLE) end as `Adj Open`
+FROM TABLE(dfs.`/path/to/input.csv`(type=>'text', fieldDelimiter=>',', skipFirstLine=>true))
 '''.strip()
         columns = [
             Column('When', 'Date', 'DATE'),
